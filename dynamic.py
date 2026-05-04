@@ -1,21 +1,3 @@
-"""Acrobot dynamics for Project.
-
-This implements the continuous-time
-Acrobot model in the standard manipulator form
-
-    M(q) qddot + C(q, qdot) + G(q) = B u.
-
-State convention:
-    x = [q1, q2, q1_dot, q2_dot]
-
-Angle convention:
-    q1 = 0: first link points straight down.
-    q2 = 0: second link is aligned with the first link.
-    top equilibrium: [pi, 0, 0, 0].
-
-The actuator torque u is applied only at the second joint.
-"""
-
 from dataclasses import dataclass
 
 import numpy as np
@@ -31,8 +13,8 @@ class AcrobotParams:
     l2: float = 1.0
     lc1: float = 0.5
     lc2: float = 0.5
-    I1: float = 1.0
-    I2: float = 1.0
+    I1: float = 1.25
+    I2: float = 1.25
     g: float = 9.81
     u_max: float = 10.0
 
@@ -62,14 +44,13 @@ def acrobot_matrices(
     c2 = np.cos(q2)
     s2 = np.sin(q2)
 
-    M11 = I1 + I2 + m1 * lc1**2 + m2 * (l1**2 + lc2**2 + 2.0 * l1 * lc2 * c2)
-    M12 = I2 + m2 * (lc2**2 + l1 * lc2 * c2)
-    M22 = I2 + m2 * lc2**2
+    M11 = I1 + I2 + m2 * l1**2 + 2.0 * m2 * l1 * lc2 * c2
+    M12 = I2 + m2 * l1 * lc2 * c2
+    M22 = I2
     M = np.array([[M11, M12], [M12, M22]], dtype=float)
 
-    h = -m2 * l1 * lc2 * s2
-    C1 = h * (2.0 * q1_dot * q2_dot + q2_dot**2)
-    C2 = -h * q1_dot**2
+    C1 = -2.0 * m2 * l1 * lc2 * s2 * q1_dot * q2_dot - m2 * l1 * lc2 * s2 * q2_dot**2
+    C2 = m2 * l1 * lc2 * s2 * q1_dot**2
     C = np.array([C1, C2], dtype=float)
 
     G1 = (m1 * lc1 + m2 * l1) * g * np.sin(q1) + m2 * lc2 * g * np.sin(q1 + q2)
