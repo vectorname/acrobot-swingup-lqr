@@ -1,6 +1,6 @@
 # Acrobot Swing-up and Balance Control  
 
-![example picture](picture/image1.png)
+![example picture](picture_video/image1.png)
 
 
 This repository contains a pure Python implementation for an underactuated robotics course:
