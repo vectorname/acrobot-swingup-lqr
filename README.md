@@ -36,7 +36,7 @@ pip install -r requirements.txt
 Enter the project directory:
 
 ```bash
-cd underactuated_project
+cd (the folder name)
 ```
 
 Run the full Acrobot control demo:
